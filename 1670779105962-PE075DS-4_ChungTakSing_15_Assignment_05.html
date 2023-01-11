@@ -1,0 +1,288 @@
+<!-- PE075DS-4_ChungTakSing_15_Assignment_05 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment_05</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            font-family: Helvetica, sans-serif;
+            font-weight: normal;        
+        }
+
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: bisque;
+        }
+
+        .title {
+            text-align: center;
+            padding: 3rem 0 0;
+            margin: 0;
+        }
+
+        .calculator-grid {
+            display: grid;
+            justify-content: center;
+            align-content: center;
+            min-height: 50vh;
+            grid-template-columns: repeat(4, 100px);
+            grid-template-rows: minmax(120px, auto) repeat(5, 100px);
+        }
+
+        .calculator-grid > button {
+            cursor: pointer;
+            font-size: 2rem;
+            border: 0.5px solid #9f9f9f;
+            outline: none;
+            outline-style: none;
+            background-color: white;
+            box-shadow: rgba(3,8,20,0.1) 0px 0.35rem 1.175rem, rgba(2,8,20,0.08) 0px 0.175rem 0.5rem;
+        }
+
+        .calculator-grid > button:hover{
+            background-color:darkorange;
+            box-shadow: rgba(3,8,20,0.1) 0px 0.35rem 1.175rem, rgba(2,8,20,0.08) 0px 0.175rem 0.5rem;
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        
+        button.boperator {
+            background-color: #d3d3d3;
+        }
+        
+        button.span-four {
+            grid-row: span 4;
+            background-color: darkorange;
+        }
+
+        .calculator-grid > button.span-four:hover{
+            background-color:rgb(0, 215, 122);
+            box-shadow: rgba(3,8,20,0.1) 0px 0.35rem 1.175rem, rgba(2,8,20,0.08) 0px 0.175rem 0.5rem;
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .output {
+            grid-column: 1 / -1;
+            background-color: darkslategrey;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 10px;
+            word-wrap: break-word;
+            word-break: break-all;
+        }
+
+        .output .previous-operand {
+            font-size: 1.5rem;
+            color: rgba(213, 213, 213, 0.7);
+        }
+
+        .output .current-operand {
+            font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="title">
+        <h1>PE075DS-4 Assignment 05 - Calculator</h1>
+        <h2>by Chung Tak Sing, Travis</h2>
+    </div>
+    <div class="calculator-grid">
+        <div class="output">
+            <div data-previous-operand class="previous-operand"></div>
+            <div data-current-operand class="current-operand"></div>
+        </div>
+        <button data-operator class="boperator">+</button>
+        <button data-operator class="boperator">-</button>
+        <button data-operator class="boperator">*</button>
+        <button data-operator class="boperator">/</button>
+        <button data-number>1</button>
+        <button data-number>2</button>
+        <button data-number>3</button>
+        <button data-equals class="span-four">=</button>
+        <button data-number>4</button>
+        <button data-number>5</button>
+        <button data-number>6</button>
+        <button data-number>7</button>
+        <button data-number>8</button>
+        <button data-number>9</button>
+        <button data-number>.</button>
+        <button data-number>0</button>
+        <button data-clear>c</button>
+    </div>
+
+    <script>
+        class Calculator {
+            constructor(previousOperandTextElement, currentOperandTextElement){ 
+            this.previousOperandTextElement = previousOperandTextElement;
+            this.currentOperandTextElement = currentOperandTextElement;
+            this.clear();
+            this.calFin = false
+
+            }
+            
+            clear(){
+                this.currentOperand = '' ;
+                this.previousOperand = '' ;
+                this.operation = undefined;
+                this.calFin = false
+            }
+            
+            addNum(number){
+                if (number === '.' && this.currentOperand.includes('.')) return
+                if (this.calFin == true){
+                    this.clear()
+                }else{
+                this.currentOperand += number.toString()
+                }
+            }
+            
+            chooseOperation(operation) {
+                if (this.currentOperand === '') return
+                if (this.previousOperand !== '') {
+                    this.prevCal()
+                }
+                this.operation = operation;
+                this.previousOperand = this.currentOperand;
+                this.currentOperand = ''
+            }
+            
+            cal(){
+                let calculation;
+
+                const prev = parseFloat(this.previousOperand);
+                const current = parseFloat(this.currentOperand);
+                if(isNaN(prev) || isNaN(current)) return;
+                switch (this.operation){
+                    case '+':
+                        calculation = prev + current;
+                        break;
+                    case '-':
+                        calculation = prev - current;
+                        break;
+                    case '*':
+                        calculation = prev * current;
+                        break;
+                    case '/':
+                        calculation = prev / current;
+                        break;
+                    default:
+                        return
+                }
+                this.currentOperand = calculation;
+                this.operation = undefined;
+                this.previousOperand = '';
+                this.calFin = true
+        
+            }
+            prevCal(){
+                let calculation;
+
+                const prev = parseFloat(this.previousOperand);
+                const current = parseFloat(this.currentOperand);
+                if(isNaN(prev) || isNaN(current)) return;
+                switch (this.operation){
+                    case '+':
+                        calculation = prev + current;
+                        break;
+                    case '-':
+                        calculation = prev - current;
+                        break;
+                    case '*':
+                        calculation = prev * current;
+                        break;
+                    case '/':
+                        calculation = prev / current;
+                        break;
+                    default:
+                        return
+                }
+                this.currentOperand = calculation;
+                this.operation = undefined;
+                this.previousOperand = '';
+                
+        
+            }
+            //This function use to change the display number with commas
+            //Need to separate integer number and decimal number , because decimal period button doesn't work in this function 
+            getDisplayNumber(number){
+                const stringNumber = number.toString();
+                //why use parseFloat()to change the string to number , because when integerDigits is string , the method .toLocaleString can't change string.
+                const integerDigits = parseFloat(stringNumber.split('.')[0])
+                const decimalDigits = stringNumber.split('.')[1]
+                let integerDisplay;
+                if (isNaN(integerDigits)) {
+                    integerDisplay = ''
+                } else {
+                    integerDisplay = integerDigits.toLocaleString('en', {maximumFractionDigits: 0})
+                }
+                if (decimalDigits != null) {
+                    return `${integerDisplay}.${decimalDigits}`
+                } else {
+                    return integerDisplay
+                }
+            }
+            updateDisplay() {
+                this.currentOperandTextElement.innerText = 
+                this.getDisplayNumber(this.currentOperand)
+                if (this.operation != null) {
+                    this.previousOperandTextElement.innerText =
+                    `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+                } else if(this.calFin == true){
+                    this.previousOperandTextElement.innerText = '='
+                } else{
+                    this.previousOperandTextElement.innerText = ''
+                }
+
+            }
+            
+        }
+        const numberButtons = document.querySelectorAll('[data-number]');
+        const operatorButtons = document.querySelectorAll('[data-operator]');
+        const equalsButton = document.querySelector('[data-equals]');
+        const clearButtton = document.querySelector('[data-clear]');
+        const previousOperandTextElement = document.querySelector('[data-previous-operand]');
+        const currentOperandTextElement = document.querySelector('[data-current-operand]');
+
+        const calculator = new Calculator(previousOperandTextElement,currentOperandTextElement);
+
+        numberButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.addNum(button.innerText);
+                calculator.updateDisplay()
+            })
+        })
+
+        operatorButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                calculator.chooseOperation(button.innerText);
+                calculator.updateDisplay()
+            })
+        })
+
+        equalsButton.addEventListener('click', button => {
+            calculator.cal();
+            calculator.updateDisplay()
+        })
+
+        clearButtton.addEventListener('click', button => {
+            calculator.clear();
+            calculator.updateDisplay()
+        })
+        
+        
+        
+
+    </script>
+</body>
+</html>
